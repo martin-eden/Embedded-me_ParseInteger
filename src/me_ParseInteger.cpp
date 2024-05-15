@@ -2,7 +2,7 @@
 
 /*
   Author: Martin Eden
-  Last mod.: 2024-05-13
+  Last mod.: 2024-05-16
 */
 
 #include "me_ParseInteger.h"
@@ -18,9 +18,10 @@ using namespace me_ParseInteger;
 
   Parameters
 
-    <@ Uint_2: u2> - memory address to store value
-    <@ Data: u1> - memory address with ASCII data
-    <DataSize: u2> - size of data
+    <@ ValuePtr: u2> - Output. Memory address to store integer.
+    <@ CharPtr: u1> - Input. Memory address of first character in
+      ASCII buffer.
+    <DataSize: u2> - Size of ASCII buffer.
 
   Returns
 
@@ -154,3 +155,7 @@ TBool me_ParseInteger::ToSint2(
 
   return true;
 }
+
+/*
+  2024-05-13
+*/
