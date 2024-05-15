@@ -36,7 +36,7 @@ using namespace me_ParseInteger;
 */
 TBool me_ParseInteger::ToUint2(
   TUint_2 * ValuePtr,
-  TChar * DataPtr,
+  TChar * CharPtr,
   TUint_1 DataSize
 )
 {
@@ -45,15 +45,15 @@ TBool me_ParseInteger::ToUint2(
 
   TUint_2 Value = 0;
 
-  TUint_2 MaxDataAddr = DataPtr + (DataSize - 1);
+  TChar* LastCharPtr = CharPtr + (DataSize - 1);
 
   const TUint_2 MaxValuePrefix = 0xFFFF / 10;
   const TUint_1 MaxValueSuffix = 0xFFFF % 10;
 
   TUint_1 Digit;
-  while (DataPtr <= MaxDataAddr)
+  while (CharPtr <= LastCharPtr)
   {
-    if (!ToDigit(&Digit, *DataPtr))
+    if (!ToDigit(&Digit, *CharPtr))
       return false;
 
     // Avoid overflow without converting to larger datatype:
@@ -71,7 +71,7 @@ TBool me_ParseInteger::ToUint2(
     Value = Value * 10 + Digit;
 
     // advance pointer
-    DataPtr = DataPtr + sizeof(TChar);
+    CharPtr = CharPtr + sizeof(TChar);
   }
 
   // store value
@@ -111,7 +111,7 @@ TBool me_ParseInteger::ToDigit(TUint_1 * Digit, TChar Char)
 */
 TBool me_ParseInteger::ToSint2(
   TSint_2 * ValuePtr,
-  TChar * DataPtr,
+  TChar * CharPtr,
   TUint_1 DataSize
 )
 {
@@ -120,12 +120,12 @@ TBool me_ParseInteger::ToSint2(
 
   TBool IsNegative;
 
-  IsNegative = (*DataPtr == '-');
+  IsNegative = (*CharPtr == '-');
 
   if (IsNegative)
   {
     // Advance data pointer past minus sign:
-    DataPtr = DataPtr + sizeof(TChar);
+    CharPtr = CharPtr + sizeof(TChar);
 
     // Decrease data length:
     DataSize = DataSize - 1;
@@ -134,7 +134,7 @@ TBool me_ParseInteger::ToSint2(
   TUint_2 Ui2Value;
   TBool IsConverted;
 
-  IsConverted = ToUint2(&Ui2Value, DataPtr, DataSize);
+  IsConverted = ToUint2(&Ui2Value, CharPtr, DataSize);
 
   if (!IsConverted)
     return false;
