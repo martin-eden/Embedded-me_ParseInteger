@@ -1,11 +1,18 @@
 // Parse ASCII to integer value
 
+/*
+  Author: Martin Eden
+  Last mod.: 2024-05-17
+*/
+
 #pragma once
 
-#include <me_Types.h>
+#include <me_BaseTypes.h>
 
 namespace me_ParseInteger
 {
+  using namespace me_BaseTypes;
+
   // 0 .. 65535
   TBool ToUint2(
     TUint_2 * ValuePtr,
@@ -22,6 +29,7 @@ namespace me_ParseInteger
 
   // Implementation
 
+  // Char to 0 .. 9
   TBool ToDigit(TUint_1 * Digit, TChar Char);
 }
 

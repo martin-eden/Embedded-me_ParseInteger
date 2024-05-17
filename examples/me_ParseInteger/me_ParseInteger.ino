@@ -18,7 +18,7 @@
 
 /*
   Author: Martin Eden
-  Last mod.: 2024-05-13
+  Last mod.: 2024-05-17
 */
 
 #include <me_ParseInteger.h>
@@ -27,8 +27,7 @@
 
 #include <me_InstallStandardStreams.h>
 #include <me_UartSpeeds.h>
-
-#include <me_Types.h>
+#include <me_BaseTypes.h>
 
 void setup()
 {
@@ -40,6 +39,7 @@ void setup()
 
 using namespace me_SerialTokenizer;
 using namespace me_ParseInteger;
+using namespace me_BaseTypes;
 
 void loop()
 {

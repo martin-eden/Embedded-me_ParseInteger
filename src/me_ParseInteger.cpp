@@ -9,9 +9,10 @@
 
 #include <ctype.h>
 
-#include <me_Types.h>
+#include <me_BaseTypes.h>
 
 using namespace me_ParseInteger;
+using namespace me_BaseTypes;
 
 /*
   Parse ASCII data to integer in range 0 .. 65535.
