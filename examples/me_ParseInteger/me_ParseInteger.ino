@@ -18,67 +18,107 @@
 
 /*
   Author: Martin Eden
-  Last mod.: 2024-05-17
+  Last mod.: 2024-05-23
 */
 
 #include <me_ParseInteger.h>
-
 #include <me_SerialTokenizer.h>
+#include <me_MemorySegment.h>
 
 #include <me_InstallStandardStreams.h>
 #include <me_UartSpeeds.h>
 #include <me_BaseTypes.h>
+
+// Forwards:
+void GetEntityDemo();
 
 void setup()
 {
   Serial.begin(me_UartSpeeds::Arduino_Normal_Bps);
   Serial.setTimeout(10);
   InstallStandardStreams();
-  printf("[me_ParseInteger.ino] Okay, we are here.\n");
-}
 
-using namespace me_SerialTokenizer;
-using namespace me_ParseInteger;
-using namespace me_BaseTypes;
+  printf("[me_ParseInteger] Okay, we are here.\n");
+
+  printf("\n");
+  printf("We will parse integers from -32768 to 32767.\n");
+  printf("Enter something...\n");
+
+  while (true)
+  {
+    GetEntityDemo();
+  }
+}
 
 void loop()
 {
-  // Length of longest value "-32768"
-  const TUint_2 IntegerMaxLength = 6;
+}
 
-  // Length of entity is one more to detect that it won't fit
-  const TUint_2 EntityMaxLength = IntegerMaxLength + 1;
+using namespace me_ParseInteger;
+// using namespace me_SerialTokenizer;
+// using namespace me_MemorySegment;
+using namespace me_BaseTypes;
 
-  // Memory for entity is one more for zero byte for printf()
-  TChar Entity[EntityMaxLength + 1];
+// Forwards:
+void PrintSeg(TMemorySegment Segment);
 
-  TUint_2 EntityLength;
+/*
+  Get entity from serial input.
 
-  if (GetEntity(&Entity[0], &EntityLength, EntityMaxLength))
+  Try to parse it to integer in range [-32768, 32767].
+*/
+void GetEntityDemo()
+{
+  const TUint_2 BufferSize = 8;
+
+  TUint_1 Buffer[BufferSize];
+
+  TMemorySegment BufferSeg =
+    {
+      .Start = { .Bytes = Buffer },
+      .Size = sizeof(Buffer),
+    };
+
+  me_SerialTokenizer::TCapturedEntity Capture;
+
+  if (me_SerialTokenizer::GetEntity(&Capture, BufferSeg))
   {
-    // Add zero byte to entity to make it ASCIIZ (for printf()):
-    Entity[EntityLength] = '\0';
-
-    // Too long to fit?
-    if (EntityLength > IntegerMaxLength)
+    if (Capture.IsTrimmed)
     {
-      printf("'%s'?\n", Entity);
+      printf("'");
+      PrintSeg(Capture.Segment);
+      printf("'..?\n");
       return;
     }
 
-    TSint_2 IntValue;
-    TBool IsConverted;
+    TSint_2 Int2;
 
-    IsConverted = ToSint2(&IntValue, Entity, EntityLength);
-
-    if (!IsConverted)
+    if (!AsciiToSint2(&Int2, Capture.Segment))
     {
-      printf("'%s'?\n", Entity);
+      printf("'");
+      PrintSeg(Capture.Segment);
+      printf("'?\n");
       return;
     }
 
-    printf("(%d)\n", IntValue);
+    printf("(%d)\n", Int2);
   }
+}
+
+/*
+  Print uncooked contents of memory segment to stdout.
+*/
+void PrintSeg(me_MemorySegment::TMemorySegment Segment)
+{
+  const TUint_1 ElementSize = 1;
+  FILE * OutputStream = stdout;
+
+  fwrite(
+    Segment.Start.Bytes,
+    Segment.Size,
+    ElementSize,
+    OutputStream
+  );
 }
 
 /*

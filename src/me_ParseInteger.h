@@ -2,29 +2,29 @@
 
 /*
   Author: Martin Eden
-  Last mod.: 2024-05-17
+  Last mod.: 2024-05-23
 */
 
 #pragma once
 
 #include <me_BaseTypes.h>
+#include <me_MemorySegment.h>
 
 namespace me_ParseInteger
 {
   using namespace me_BaseTypes;
+  using me_MemorySegment::TMemorySegment;
 
   // 0 .. 65535
-  TBool ToUint2(
+  TBool AsciiToUint2(
     TUint_2 * ValuePtr,
-    TChar * Data,
-    TUint_1 DataSize
+    TMemorySegment DataSeg
   );
 
   // -32768 .. 32767
-  TBool ToSint2(
+  TBool AsciiToSint2(
     TSint_2 * ValuePtr,
-    TChar * Data,
-    TUint_1 DataSize
+    TMemorySegment DataSeg
   );
 
   // Implementation
@@ -35,4 +35,5 @@ namespace me_ParseInteger
 
 /*
   2024-05-13
+  2024-05-23 using memory segment
 */
