@@ -2,17 +2,19 @@
 
 /*
   Author: Martin Eden
-  Last mod.: 2024-05-16
+  Last mod.: 2024-05-23
 */
 
 #include "me_ParseInteger.h"
 
-#include <ctype.h>
-
 #include <me_BaseTypes.h>
+#include <me_MemorySegment.h>
 
-using namespace me_ParseInteger;
 using namespace me_BaseTypes;
+
+// Forwards:
+TBool SafeAdd(TUint_2 * Result, TUint_2 Base, TUint_1 Digit);
+TBool SafeMul(TUint_2 * Result, TUint_2 Base, TUint_1 Digit);
 
 /*
   Parse ASCII data to integer in range 0 .. 65535.
@@ -20,9 +22,8 @@ using namespace me_BaseTypes;
   Parameters
 
     <@ ValuePtr: u2> - Output. Memory address to store integer.
-    <@ CharPtr: u1> - Input. Memory address of first character in
-      ASCII buffer.
-    <DataSize: u2> - Size of ASCII buffer.
+    <DataSeg> - Input. Structure describing memory segment with data.
+      Address and length.
 
   Returns
 
@@ -32,52 +33,83 @@ using namespace me_BaseTypes;
 
     Leading zeroes are allowed: "001" -> 1
 
-    Non-digits are not allowed: (" 1", "1 ") -> nah
+    Non-digits are not allowed: (" 1", "1,") -> nah
 
     Exceeding range is not allowed: "99999" -> nah
 */
-TBool me_ParseInteger::ToUint2(
+TBool me_ParseInteger::AsciiToUint2(
   TUint_2 * ValuePtr,
-  TChar * CharPtr,
-  TUint_1 DataSize
+  TMemorySegment DataSeg
 )
 {
-  if (DataSize == 0)
+  if (DataSeg.Size == 0)
     return false;
 
   TUint_2 Value = 0;
 
-  TChar* LastCharPtr = CharPtr + (DataSize - 1);
+  TUint_1 Offset = 0;
 
-  const TUint_2 MaxValuePrefix = 0xFFFF / 10;
-  const TUint_1 MaxValueSuffix = 0xFFFF % 10;
-
-  TUint_1 Digit;
-  while (CharPtr <= LastCharPtr)
+  TUint_1 Byte;
+  // Note (1)
+  while (me_MemorySegment::GetByte(&Byte, DataSeg, Offset))
   {
-    if (!ToDigit(&Digit, *CharPtr))
+    // Non-digit character - return
+    TUint_1 Digit;
+    if (!ToDigit(&Digit, Byte))
       return false;
 
-    // Avoid overflow without converting to larger datatype:
-    if (
-      (Value > MaxValuePrefix) ||
-      (
-        (Value == MaxValuePrefix) && (Digit > MaxValueSuffix)
-      )
-    )
+    // Do (Value = Value * 10 + Digit) without overflow or return
     {
-      // Case like "99999" or "65536"
-      return false;
+      TUint_2 NewValue = Value;
+
+      // Case like (Value: 9999)
+      const TUint_1 NumericBase = 10;
+      if (!SafeMul(&NewValue, NewValue, NumericBase))
+        return false;
+
+      // Case like (Value: 65530, Digit: 6)
+      if (!SafeAdd(&NewValue, NewValue, Digit))
+        return false;
+
+      Value = NewValue;
     }
 
-    Value = Value * 10 + Digit;
-
-    // advance pointer
-    CharPtr = CharPtr + sizeof(TChar);
+    // Advance pointer
+    ++Offset;
   }
 
   // store value
   *ValuePtr = Value;
+
+  return true;
+}
+
+const TUint_2 MaxUi2 = 0xFFFF;
+
+/*
+  Multiply two numbers if they will not overflow.
+*/
+TBool SafeMul(TUint_2 * Result, TUint_2 Base, TUint_1 Digit)
+{
+  // Invariant of "Base * Digit > MaxUi2"
+  if (Base > MaxUi2 / Digit)
+    return false;
+
+  *Result = Base * Digit;
+
+  return true;
+}
+
+/*
+  Sum two numbers and if they will not overflow.
+*/
+TBool SafeAdd(TUint_2 * Result, TUint_2 Base, TUint_1 Digit)
+{
+  // Invariant of "Base + Digit > MaxUi2"
+  if (Base > MaxUi2 - Digit)
+    return false;
+
+  *Result = Base + Digit;
 
   return true;
 }
@@ -96,7 +128,7 @@ TBool me_ParseInteger::ToUint2(
 */
 TBool me_ParseInteger::ToDigit(TUint_1 * Digit, TChar Char)
 {
-  if (!isdigit(Char))
+  if (!((Char >= '0') && (Char <= '9')))
     return false;
 
   *Digit = Char - '0';
@@ -107,56 +139,74 @@ TBool me_ParseInteger::ToDigit(TUint_1 * Digit, TChar Char)
 /*
   Parse ASCII data to integer in range -32768 .. 32767.
 
-  "+1" -> nah
-  "- 1" -> nah
-  "-1" -> -1
+  Details
+
+    "-1" -> -1
+    "-0" -> 0
+    "--1" -> nah
 */
-TBool me_ParseInteger::ToSint2(
+TBool me_ParseInteger::AsciiToSint2(
   TSint_2 * ValuePtr,
-  TChar * CharPtr,
-  TUint_1 DataSize
+  TMemorySegment DataSeg
 )
 {
-  if (DataSize == 0)
+  if (DataSeg.Size == 0)
     return false;
 
   TBool IsNegative;
 
-  IsNegative = (*CharPtr == '-');
+  IsNegative = (DataSeg.Start.Bytes[0] == '-');
 
   if (IsNegative)
   {
-    // Advance data pointer past minus sign:
-    CharPtr = CharPtr + sizeof(TChar);
-
-    // Decrease data length:
-    DataSize = DataSize - 1;
+    // Advance data segment past minus sign:
+    ++DataSeg.Start.Addr;
+    --DataSeg.Size;
   }
 
   TUint_2 Ui2Value;
   TBool IsConverted;
 
-  IsConverted = ToUint2(&Ui2Value, CharPtr, DataSize);
+  IsConverted = AsciiToUint2(&Ui2Value, DataSeg);
 
   if (!IsConverted)
     return false;
 
-  const TUint_2 MaxPositiveValue = (0xFFFF >> 1); // 32767
-  const TUint_2 MaxNegativeValue = MaxPositiveValue + 1;
+  const TUint_2 MaxPosValue = (0xFFFF >> 1); // 32767
+  const TUint_2 MaxNegValue = MaxPosValue + 1; // 32768
 
-  if (IsNegative && (Ui2Value > MaxNegativeValue))
-    return false;
-
-  if (!IsNegative && (Ui2Value > MaxPositiveValue))
-    return false;
+  if (IsNegative)
+  {
+    if (Ui2Value > MaxNegValue)
+      return false;
+  }
+  else // if positive
+  {
+    if (Ui2Value > MaxPosValue)
+      return false;
+  }
 
   *ValuePtr = Ui2Value;
   if (IsNegative)
-    *ValuePtr = -*ValuePtr; // C code is so understandable!
+    *ValuePtr = -(*ValuePtr);
 
   return true;
 }
 
 /*
+  [1]:
+
+    while (GetByte(&Byte, DataSeg, Offset))
+
+    I have no idea why "GetByte()" compiles. It should be
+    "me_MemorySegment::GetByte()". Spent like 2 hours and still no idea.
+    (Except to recommend Dennis do something else in 1970s.)
+
+      (Generic names are quite ugly without context huh? But natural
+      under their namespaces.)
+*/
+
+/*
   2024-05-13
+  2024-05-23 memory segment, safe mul, safe add
 */
