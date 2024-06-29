@@ -2,7 +2,7 @@
 
 /*
   Author: Martin Eden
-  Last mod.: 2024-05-23
+  Last mod.: 2024-05-29
 */
 
 #include "me_ParseInteger.h"
@@ -50,8 +50,7 @@ TBool me_ParseInteger::AsciiToUint2(
   TUint_1 Offset = 0;
 
   TUint_1 Byte;
-  // Note (1)
-  while (me_MemorySegment::GetByte(&Byte, DataSeg, Offset))
+  while (DataSeg.GetByte(&Byte, Offset))
   {
     // Non-digit character - return
     TUint_1 Digit;
@@ -155,7 +154,7 @@ TBool me_ParseInteger::AsciiToSint2(
 
   TBool IsNegative;
 
-  IsNegative = (DataSeg.Start.Bytes[0] == '-');
+  IsNegative = (DataSeg.Bytes[0] == '-');
 
   if (IsNegative)
   {
@@ -194,19 +193,7 @@ TBool me_ParseInteger::AsciiToSint2(
 }
 
 /*
-  [1]:
-
-    while (GetByte(&Byte, DataSeg, Offset))
-
-    I have no idea why "GetByte()" compiles. It should be
-    "me_MemorySegment::GetByte()". Spent like 2 hours and still no idea.
-    (Except to recommend Dennis do something else in 1970s.)
-
-      (Generic names are quite ugly without context huh? But natural
-      under their namespaces.)
-*/
-
-/*
   2024-05-13
   2024-05-23 memory segment, safe mul, safe add
+  2024-06-29 sync with libs
 */

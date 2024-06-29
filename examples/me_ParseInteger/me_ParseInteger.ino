@@ -3,7 +3,7 @@
 /*
   Enter random space/newline separated strings to Serial.
 
-  Entities that fall into range -32768 .. 32767 are converted to
+  Entities falling into range -32768 .. 32767 are converted to
   integers.
 
     "  143 1a la" -> (143) '1a'? 'la'?
@@ -18,7 +18,7 @@
 
 /*
   Author: Martin Eden
-  Last mod.: 2024-05-23
+  Last mod.: 2024-06-29
 */
 
 #include <me_ParseInteger.h>
@@ -73,11 +73,9 @@ void GetEntityDemo()
 
   TUint_1 Buffer[BufferSize];
 
-  TMemorySegment BufferSeg =
-    {
-      .Start = { .Bytes = Buffer },
-      .Size = sizeof(Buffer),
-    };
+  TMemorySegment BufferSeg;
+  BufferSeg.Size = sizeof(Buffer);
+  BufferSeg.Start.Addr = (TUint_2) Buffer;
 
   me_SerialTokenizer::TCapturedEntity Capture;
 
@@ -114,7 +112,7 @@ void PrintSeg(me_MemorySegment::TMemorySegment Segment)
   FILE * OutputStream = stdout;
 
   fwrite(
-    Segment.Start.Bytes,
+    Segment.Bytes,
     Segment.Size,
     ElementSize,
     OutputStream
@@ -124,4 +122,6 @@ void PrintSeg(me_MemorySegment::TMemorySegment Segment)
 /*
   2024-05-08
   2024-05-13
+  2024-05-23
+  2024-06-29
 */
