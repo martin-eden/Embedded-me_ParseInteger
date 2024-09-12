@@ -12,7 +12,6 @@
 
 namespace me_ParseInteger
 {
-  using namespace me_BaseTypes;
   using me_MemorySegment::TMemorySegment;
 
   // 0 .. 65535
