@@ -1,6 +1,11 @@
 // [me_ParseInteger] test/demo
 
 /*
+  Author: Martin Eden
+  Last mod.: 2024-09-12
+*/
+
+/*
   Enter random space/newline separated strings to Serial.
 
   Entities falling into range -32768 .. 32767 are converted to
@@ -14,11 +19,6 @@
 
   Under the hood there is also ToUint2() function if you wish
   range 0 .. 65535.
-*/
-
-/*
-  Author: Martin Eden
-  Last mod.: 2024-06-29
 */
 
 #include <me_ParseInteger.h>
@@ -55,9 +55,6 @@ void loop()
 }
 
 using namespace me_ParseInteger;
-// using namespace me_SerialTokenizer;
-// using namespace me_MemorySegment;
-using namespace me_BaseTypes;
 
 // Forwards:
 void PrintSeg(TMemorySegment Segment);

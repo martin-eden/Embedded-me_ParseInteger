@@ -2,15 +2,13 @@
 
 /*
   Author: Martin Eden
-  Last mod.: 2024-05-29
+  Last mod.: 2024-09-12
 */
 
 #include "me_ParseInteger.h"
 
 #include <me_BaseTypes.h>
 #include <me_MemorySegment.h>
-
-using namespace me_BaseTypes;
 
 // Forwards:
 TBool SafeAdd(TUint_2 * Result, TUint_2 Base, TUint_1 Digit);
