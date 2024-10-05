@@ -2,7 +2,7 @@
 
 /*
   Author: Martin Eden
-  Last mod.: 2024-09-12
+  Last mod.: 2024-10-05
 */
 
 /*
@@ -57,7 +57,7 @@ void loop()
 using namespace me_ParseInteger;
 
 // Forwards:
-void PrintSeg(TMemorySegment Segment);
+void PrintSeg(me_MemorySegment::TMemorySegment Segment);
 
 /*
   Get entity from serial input.
@@ -66,6 +66,22 @@ void PrintSeg(TMemorySegment Segment);
 */
 void GetEntityDemo()
 {
+  /*
+    This example was written before creation of [me_ManagedMemory] and
+    advancement of [me_MemorySegment]. It still works fine today.
+
+    But today we have standalone Print() function for memory segment
+    and we can use dynamic segment and ResizeTo() to whatever
+    size we please.
+
+    2024-10-05
+  */
+
+  using
+    me_MemorySegment::TMemorySegment,
+    me_SerialTokenizer::TCapturedEntity,
+    me_SerialTokenizer::GetEntity;
+
   const TUint_2 BufferSize = 8;
 
   TUint_1 Buffer[BufferSize];
@@ -74,9 +90,9 @@ void GetEntityDemo()
   BufferSeg.Size = sizeof(Buffer);
   BufferSeg.Start.Addr = (TUint_2) Buffer;
 
-  me_SerialTokenizer::TCapturedEntity Capture;
+  TCapturedEntity Capture;
 
-  if (me_SerialTokenizer::GetEntity(&Capture, BufferSeg))
+  if (GetEntity(&Capture, BufferSeg))
   {
     if (Capture.IsTrimmed)
     {
@@ -121,4 +137,5 @@ void PrintSeg(me_MemorySegment::TMemorySegment Segment)
   2024-05-13
   2024-05-23
   2024-06-29
+  2024-10-05
 */

@@ -10,9 +10,11 @@
 #include <me_BaseTypes.h>
 #include <me_MemorySegment.h>
 
-// Forwards:
-TBool SafeAdd(TUint_2 * Result, TUint_2 Base, TUint_1 Digit);
-TBool SafeMul(TUint_2 * Result, TUint_2 Base, TUint_1 Digit);
+using
+  me_MemorySegment::TMemorySegment,
+  me_ParseInteger::Freetown::SafeMul,
+  me_ParseInteger::Freetown::SafeAdd,
+  me_ParseInteger::Freetown::ToDigit;
 
 /*
   Parse ASCII data to integer in range 0 .. 65535.
@@ -45,17 +47,16 @@ TBool me_ParseInteger::AsciiToUint2(
 
   TUint_2 Value = 0;
 
-  TUint_1 Offset = 0;
-
-  TUint_1 Byte;
-  while (DataSeg.GetByte(&Byte, Offset))
+  for (TUint_2 Offset = 0; Offset < DataSeg.Size; ++Offset)
   {
+    TUint_1 Byte = DataSeg.Bytes[Offset];
+
     // Non-digit character - return
     TUint_1 Digit;
     if (!ToDigit(&Digit, Byte))
       return false;
 
-    // Do (Value = Value * 10 + Digit) without overflow or return
+    // Do (Value = Value * 10 + Digit) without overflow. Or return
     {
       TUint_2 NewValue = Value;
 
@@ -70,65 +71,10 @@ TBool me_ParseInteger::AsciiToUint2(
 
       Value = NewValue;
     }
-
-    // Advance pointer
-    ++Offset;
   }
 
   // store value
   *ValuePtr = Value;
-
-  return true;
-}
-
-const TUint_2 MaxUi2 = 0xFFFF;
-
-/*
-  Multiply two numbers if they will not overflow.
-*/
-TBool SafeMul(TUint_2 * Result, TUint_2 Base, TUint_1 Digit)
-{
-  // Invariant of "Base * Digit > MaxUi2"
-  if (Base > MaxUi2 / Digit)
-    return false;
-
-  *Result = Base * Digit;
-
-  return true;
-}
-
-/*
-  Sum two numbers and if they will not overflow.
-*/
-TBool SafeAdd(TUint_2 * Result, TUint_2 Base, TUint_1 Digit)
-{
-  // Invariant of "Base + Digit > MaxUi2"
-  if (Base > MaxUi2 - Digit)
-    return false;
-
-  *Result = Base + Digit;
-
-  return true;
-}
-
-/*
-  Convert "0" .. "9" ASCII character to 0 .. 9.
-
-  Returns
-
-    false - when character is not digit
-
-  Note
-
-    Yes I know implementation is trivial but I need function
-    in this form for design.
-*/
-TBool me_ParseInteger::ToDigit(TUint_1 * Digit, TChar Char)
-{
-  if (!((Char >= '0') && (Char <= '9')))
-    return false;
-
-  *Digit = Char - '0';
 
   return true;
 }
@@ -194,4 +140,5 @@ TBool me_ParseInteger::AsciiToSint2(
   2024-05-13
   2024-05-23 memory segment, safe mul, safe add
   2024-06-29 sync with libs
+  2024-10-05 Freetown
 */
