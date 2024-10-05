@@ -5,6 +5,15 @@
 Arduino library to parse ASCII to integer.
 
 
+## Code
+
+* [Interface][Interface]
+* Implementation
+  * [Exported functions][me_ParseInteger]
+  * [Freetown][Freetown]
+* [Example][Example]
+
+
 ## Requirements
 
   * arduino-cli
@@ -21,12 +30,16 @@ Run [Install.sh](Install.sh).
 Run [Remove.sh](Remove.sh).
 
 
-## Details
-
-
-[Code](src/me_ParseInteger.cpp)
-
-
 ## See also
 
-[My other repositories](https://github.com/martin-eden/contents).
+* [My other embedded C++ libraries][Embedded]
+* [My other repositories][Repos]
+
+
+[Interface]: src/me_ParseInteger.h
+[me_ParseInteger]: src/me_ParseInteger.cpp
+[Freetown]: src/me_ParseInteger_Freetown.cpp
+[Example]: examples/me_ParseInteger/me_ParseInteger.ino
+
+[Embedded]: https://github.com/martin-eden/Embedded_Crafts/tree/master/Parts
+[Repos]: https://github.com/martin-eden/contents
