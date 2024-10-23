@@ -2,7 +2,7 @@
 
 /*
   Author: Martin Eden
-  Last mod.: 2024-09-12
+  Last mod.: 2024-10-23
 */
 
 #include "me_ParseInteger.h"
@@ -103,7 +103,7 @@ TBool me_ParseInteger::AsciiToSint2(
   if (IsNegative)
   {
     // Advance data segment past minus sign:
-    ++DataSeg.Start.Addr;
+    ++DataSeg.Addr;
     --DataSeg.Size;
   }
 
