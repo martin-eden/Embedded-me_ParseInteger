@@ -2,7 +2,7 @@
 
 /*
   Author: Martin Eden
-  Last mod.: 2024-10-05
+  Last mod.: 2024-10-23
 */
 
 /*
@@ -25,9 +25,9 @@
 #include <me_SerialTokenizer.h>
 #include <me_MemorySegment.h>
 
-#include <me_InstallStandardStreams.h>
-#include <me_UartSpeeds.h>
 #include <me_BaseTypes.h>
+#include <me_UartSpeeds.h>
+#include <me_Console.h>
 
 // Forwards:
 void GetEntityDemo();
@@ -36,13 +36,12 @@ void setup()
 {
   Serial.begin(me_UartSpeeds::Arduino_Normal_Bps);
   Serial.setTimeout(10);
-  InstallStandardStreams();
 
-  printf("[me_ParseInteger] Okay, we are here.\n");
+  Console.Print("[me_ParseInteger] Okay, we are here.");
 
-  printf("\n");
-  printf("We will parse integers from -32768 to 32767.\n");
-  printf("Enter something...\n");
+  Console.Print("");
+  Console.Print("We will parse integers from -32768 to 32767.");
+  Console.Print("Enter something...");
 
   while (true)
   {
@@ -88,7 +87,7 @@ void GetEntityDemo()
 
   TMemorySegment BufferSeg;
   BufferSeg.Size = sizeof(Buffer);
-  BufferSeg.Start.Addr = (TUint_2) Buffer;
+  BufferSeg.Addr = (TUint_2) Buffer;
 
   TCapturedEntity Capture;
 
@@ -96,9 +95,10 @@ void GetEntityDemo()
   {
     if (Capture.IsTrimmed)
     {
-      printf("'");
-      PrintSeg(Capture.Segment);
-      printf("'..?\n");
+      Console.Write("'");
+      Console.Write(Capture.Segment);
+      Console.Write("'..?");
+      Console.EndLine();
       return;
     }
 
@@ -106,30 +106,18 @@ void GetEntityDemo()
 
     if (!AsciiToSint2(&Int2, Capture.Segment))
     {
-      printf("'");
-      PrintSeg(Capture.Segment);
-      printf("'?\n");
+      Console.Write("'");
+      Console.Write(Capture.Segment);
+      Console.Write("'?");
+      Console.EndLine();
       return;
     }
 
-    printf("(%d)\n", Int2);
+    Console.Write("Value (");
+    Console.Print(Int2);
+    Console.Write(")");
+    Console.EndLine();
   }
-}
-
-/*
-  Print uncooked contents of memory segment to stdout.
-*/
-void PrintSeg(me_MemorySegment::TMemorySegment Segment)
-{
-  const TUint_1 ElementSize = 1;
-  FILE * OutputStream = stdout;
-
-  fwrite(
-    Segment.Bytes,
-    Segment.Size,
-    ElementSize,
-    OutputStream
-  );
 }
 
 /*
@@ -138,4 +126,5 @@ void PrintSeg(me_MemorySegment::TMemorySegment Segment)
   2024-05-23
   2024-06-29
   2024-10-05
+  2024-10-23
 */
