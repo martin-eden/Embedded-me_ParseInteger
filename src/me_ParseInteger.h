@@ -2,7 +2,7 @@
 
 /*
   Author: Martin Eden
-  Last mod.: 2024-10-05
+  Last mod.: 2024-12-12
 */
 
 #pragma once
@@ -33,7 +33,7 @@ namespace me_ParseInteger
     TBool SafeAdd(TUint_2 * Result, TUint_2 Base, TUint_1 Digit);
 
     // Convert "0" .. "9" ASCII character to 0 .. 9
-    TBool ToDigit(TUint_1 * Digit, TChar Char);
+    TBool ToDigit(TUint_1 * Digit, TUint_1 Char);
   }
 }
 

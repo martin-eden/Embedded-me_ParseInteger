@@ -2,7 +2,7 @@
 
 /*
   Author: Martin Eden
-  Last mod.: 2024-10-05
+  Last mod.: 2024-12-12
 */
 
 #include "me_ParseInteger.h"
@@ -61,7 +61,7 @@ TBool me_ParseInteger::Freetown::SafeAdd(
 */
 TBool me_ParseInteger::Freetown::ToDigit(
   TUint_1 * Digit,
-  TChar Char
+  TUint_1 Char
 )
 {
   if (!((Char >= '0') && (Char <= '9')))
