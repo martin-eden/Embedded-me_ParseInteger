@@ -7,8 +7,6 @@
 
 #include <me_ParseInteger.h>
 
-#include <me_MemorySegment.h>
-
 using namespace me_ParseInteger;
 
 using
