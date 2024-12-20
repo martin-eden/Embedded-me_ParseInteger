@@ -2,7 +2,7 @@
 
 /*
   Author: Martin Eden
-  Last mod.: 2024-10-23
+  Last mod.: 2024-12-20
 */
 
 /*
@@ -22,11 +22,12 @@
 */
 
 #include <me_ParseInteger.h>
+
 #include <me_SerialTokenizer.h>
 #include <me_MemorySegment.h>
 
 #include <me_BaseTypes.h>
-#include <me_UartSpeeds.h>
+#include <me_Uart.h>
 #include <me_Console.h>
 
 // Forwards:
@@ -34,8 +35,7 @@ void GetEntityDemo();
 
 void setup()
 {
-  Serial.begin(me_UartSpeeds::Arduino_Normal_Bps);
-  Serial.setTimeout(10);
+  me_Uart::Init(me_Uart::Speed_115k_Bps);
 
   Console.Print("[me_ParseInteger] Okay, we are here.");
 
@@ -52,8 +52,6 @@ void setup()
 void loop()
 {
 }
-
-using namespace me_ParseInteger;
 
 // Forwards:
 void PrintSeg(me_MemorySegment::TMemorySegment Segment);
@@ -78,8 +76,10 @@ void GetEntityDemo()
 
   using
     me_MemorySegment::TMemorySegment,
-    me_SerialTokenizer::TCapturedEntity,
-    me_SerialTokenizer::GetEntity;
+    me_SerialTokenizer::TSerialTokenizer,
+    me_ParseInteger::AsciiToSint2;
+
+  TSerialTokenizer Tokenizer;
 
   const TUint_2 BufferSize = 8;
 
@@ -89,25 +89,14 @@ void GetEntityDemo()
   BufferSeg.Size = sizeof(Buffer);
   BufferSeg.Addr = (TUint_2) Buffer;
 
-  TCapturedEntity Capture;
-
-  if (GetEntity(&Capture, BufferSeg))
+  if (Tokenizer.GetEntity(&BufferSeg, BufferSeg))
   {
-    if (Capture.IsTrimmed)
-    {
-      Console.Write("'");
-      Console.Write(Capture.Segment);
-      Console.Write("'..?");
-      Console.EndLine();
-      return;
-    }
-
     TSint_2 Int2;
 
-    if (!AsciiToSint2(&Int2, Capture.Segment))
+    if (!AsciiToSint2(&Int2, BufferSeg))
     {
       Console.Write("'");
-      Console.Write(Capture.Segment);
+      Console.Write(BufferSeg);
       Console.Write("'?");
       Console.EndLine();
       return;
@@ -121,10 +110,8 @@ void GetEntityDemo()
 }
 
 /*
-  2024-05-08
-  2024-05-13
-  2024-05-23
-  2024-06-29
-  2024-10-05
-  2024-10-23
+  2024-05 # # #
+  2024-06 #
+  2024-10 # #
+  2024-12-20
 */

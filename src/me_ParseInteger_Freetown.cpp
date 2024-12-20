@@ -2,19 +2,19 @@
 
 /*
   Author: Martin Eden
-  Last mod.: 2024-12-12
+  Last mod.: 2024-12-20
 */
 
-#include "me_ParseInteger.h"
+#include <me_ParseInteger.h>
 
-#include <me_BaseTypes.h>
+using namespace me_ParseInteger;
 
 const TUint_2 MaxUi2 = 0xFFFF;
 
 /*
   Multiply two numbers if they will not overflow
 */
-TBool me_ParseInteger::Freetown::SafeMul(
+TBool Freetown::SafeMul(
   TUint_2 * Result,
   TUint_2 Base,
   TUint_1 Digit
@@ -32,7 +32,7 @@ TBool me_ParseInteger::Freetown::SafeMul(
 /*
   Sum two numbers if they will not overflow
 */
-TBool me_ParseInteger::Freetown::SafeAdd(
+TBool Freetown::SafeAdd(
   TUint_2 * Result,
   TUint_2 Base,
   TUint_1 Digit
@@ -59,7 +59,7 @@ TBool me_ParseInteger::Freetown::SafeAdd(
     Yes I know implementation is trivial but I need function
     in this form for design.
 */
-TBool me_ParseInteger::Freetown::ToDigit(
+TBool Freetown::ToDigit(
   TUint_1 * Digit,
   TUint_1 Char
 )

@@ -2,19 +2,17 @@
 
 /*
   Author: Martin Eden
-  Last mod.: 2024-10-23
+  Last mod.: 2024-12-20
 */
 
-#include "me_ParseInteger.h"
+#include <me_ParseInteger.h>
 
-#include <me_BaseTypes.h>
 #include <me_MemorySegment.h>
 
+using namespace me_ParseInteger;
+
 using
-  me_MemorySegment::TMemorySegment,
-  me_ParseInteger::Freetown::SafeMul,
-  me_ParseInteger::Freetown::SafeAdd,
-  me_ParseInteger::Freetown::ToDigit;
+  me_MemorySegment::TMemorySegment;
 
 /*
   Parse ASCII data to integer in range 0 .. 65535.
@@ -42,6 +40,11 @@ TBool me_ParseInteger::AsciiToUint2(
   TMemorySegment DataSeg
 )
 {
+  using
+    Freetown::SafeMul,
+    Freetown::SafeAdd,
+    Freetown::ToDigit;
+
   if (DataSeg.Size == 0)
     return false;
 
