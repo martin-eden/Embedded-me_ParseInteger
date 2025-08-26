@@ -2,15 +2,16 @@
 
 /*
   Author: Martin Eden
-  Last mod.: 2024-12-20
+  Last mod.: 2025-08-26
 */
 
 #include <me_ParseInteger.h>
 
-using namespace me_ParseInteger;
+#include <me_BaseTypes.h>
+#include <me_MemorySegment.h>
+#include <me_WorkMemory.h>
 
-using
-  me_MemorySegment::TMemorySegment;
+using namespace me_ParseInteger;
 
 /*
   Parse ASCII data to integer in range 0 .. 65535.
@@ -34,48 +35,35 @@ using
     Exceeding range is not allowed: "99999" -> nah
 */
 TBool me_ParseInteger::AsciiToUint2(
-  TUint_2 * ValuePtr,
-  TMemorySegment DataSeg
+  TUint_2 * Result,
+  me_MemorySegment::TMemorySegment DataSeg
 )
 {
-  using
-    Freetown::SafeMul,
-    Freetown::SafeAdd,
-    Freetown::ToDigit;
+  const TUint_1 NumericBase = 10;
 
-  if (DataSeg.Size == 0)
+  me_WorkMemory::TInputStream DataStream;
+  TUnit Byte;
+  TUint_1 Digit;
+  TUint_2 Value;
+
+  if (!DataStream.Init(DataSeg))
     return false;
 
-  TUint_2 Value = 0;
+  Value = 0;
 
-  for (TUint_2 Offset = 0; Offset < DataSeg.Size; ++Offset)
+  while (DataStream.Read(&Byte))
   {
-    TUint_1 Byte = DataSeg.Bytes[Offset];
-
-    // Non-digit character - return
-    TUint_1 Digit;
-    if (!ToDigit(&Digit, Byte))
+    if (!Freetown::ToDigit(&Digit, Byte))
       return false;
 
-    // Do (Value = Value * 10 + Digit) without overflow. Or return
-    {
-      TUint_2 NewValue = Value;
+    if (!Freetown::SafeMul(&Value, Value, NumericBase))
+      return false;
 
-      // Case like (Value: 9999)
-      const TUint_1 NumericBase = 10;
-      if (!SafeMul(&NewValue, NewValue, NumericBase))
-        return false;
-
-      // Case like (Value: 65530, Digit: 6)
-      if (!SafeAdd(&NewValue, NewValue, Digit))
-        return false;
-
-      Value = NewValue;
-    }
+    if (!Freetown::SafeAdd(&Value, Value, Digit))
+      return false;
   }
 
-  // store value
-  *ValuePtr = Value;
+  *Result = Value;
 
   return true;
 }
@@ -85,21 +73,39 @@ TBool me_ParseInteger::AsciiToUint2(
 
   Details
 
+    ASCII integer MAY start with "-".
+
+  Examples
+
+    "1" -> 1
     "-1" -> -1
+    "--1" -> false
+    "+1" -> false
+    "0" -> 0
     "-0" -> 0
-    "--1" -> nah
 */
 TBool me_ParseInteger::AsciiToSint2(
   TSint_2 * ValuePtr,
-  TMemorySegment DataSeg
+  me_MemorySegment::TMemorySegment DataSeg
 )
 {
-  if (DataSeg.Size == 0)
+  const TUint_2
+    MaxPosValue = 0x7FFF, // 32767
+    MaxNegValue = 0x8000; // 32768
+
+  me_WorkMemory::TInputStream DataStream;
+  TUnit FirstByte;
+  TBool IsNegative;
+  TUint_2 Ui2Value;
+  TBool IsConverted;
+
+  if (!DataStream.Init(DataSeg))
     return false;
 
-  TBool IsNegative;
+  if (!DataStream.Read(&FirstByte))
+    return false;
 
-  IsNegative = (DataSeg.Bytes[0] == '-');
+  IsNegative = (FirstByte == '-');
 
   if (IsNegative)
   {
@@ -108,16 +114,10 @@ TBool me_ParseInteger::AsciiToSint2(
     --DataSeg.Size;
   }
 
-  TUint_2 Ui2Value;
-  TBool IsConverted;
-
   IsConverted = AsciiToUint2(&Ui2Value, DataSeg);
 
   if (!IsConverted)
     return false;
-
-  const TUint_2 MaxPosValue = (0xFFFF >> 1); // 32767
-  const TUint_2 MaxNegValue = MaxPosValue + 1; // 32768
 
   if (IsNegative)
   {
@@ -138,8 +138,6 @@ TBool me_ParseInteger::AsciiToSint2(
 }
 
 /*
-  2024-05-13
-  2024-05-23 memory segment, safe mul, safe add
-  2024-06-29 sync with libs
-  2024-10-05 Freetown
+  2024 # # # #
+  2025-08-26
 */
