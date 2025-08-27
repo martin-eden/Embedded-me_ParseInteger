@@ -26,7 +26,6 @@
 #include <me_SerialTokenizer.h>
 
 #include <me_BaseTypes.h>
-#include <me_Uart.h>
 #include <me_Console.h>
 
 // Forwards:
@@ -34,7 +33,7 @@ void GetEntityDemo();
 
 void setup()
 {
-  me_Uart::Init(me_Uart::Speed_115k_Bps);
+  Console.Init();
 
   Console.Print("[me_ParseInteger] Okay, we are here.");
 
@@ -108,8 +107,5 @@ void GetEntityDemo()
 }
 
 /*
-  2024-05 # # #
-  2024-06 #
-  2024-10 # #
-  2024-12-20
+  2024 # # # # # # #
 */
