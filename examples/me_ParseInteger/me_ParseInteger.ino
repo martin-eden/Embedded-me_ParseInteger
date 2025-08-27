@@ -2,7 +2,7 @@
 
 /*
   Author: Martin Eden
-  Last mod.: 2024-12-20
+  Last mod.: 2025-08-27
 */
 
 /*
@@ -24,7 +24,6 @@
 #include <me_ParseInteger.h>
 
 #include <me_SerialTokenizer.h>
-#include <me_MemorySegment.h>
 
 #include <me_BaseTypes.h>
 #include <me_Uart.h>
@@ -54,7 +53,7 @@ void loop()
 }
 
 // Forwards:
-void PrintSeg(me_MemorySegment::TMemorySegment Segment);
+void PrintSeg(TAddressSegment Segment);
 
 /*
   Get entity from serial input.
@@ -75,7 +74,6 @@ void GetEntityDemo()
   */
 
   using
-    me_MemorySegment::TMemorySegment,
     me_SerialTokenizer::TSerialTokenizer,
     me_ParseInteger::AsciiToSint2;
 
@@ -85,7 +83,7 @@ void GetEntityDemo()
 
   TUint_1 Buffer[BufferSize];
 
-  TMemorySegment BufferSeg;
+  TAddressSegment BufferSeg;
   BufferSeg.Size = sizeof(Buffer);
   BufferSeg.Addr = (TUint_2) Buffer;
 

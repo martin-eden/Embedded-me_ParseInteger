@@ -2,13 +2,12 @@
 
 /*
   Author: Martin Eden
-  Last mod.: 2025-08-26
+  Last mod.: 2025-08-27
 */
 
 #include <me_ParseInteger.h>
 
 #include <me_BaseTypes.h>
-#include <me_MemorySegment.h>
 #include <me_WorkMemory.h>
 
 using namespace me_ParseInteger;
@@ -36,7 +35,7 @@ using namespace me_ParseInteger;
 */
 TBool me_ParseInteger::AsciiToUint2(
   TUint_2 * Result,
-  me_MemorySegment::TMemorySegment DataSeg
+  TAddressSegment DataSeg
 )
 {
   const TUint_1 NumericBase = 10;
@@ -86,7 +85,7 @@ TBool me_ParseInteger::AsciiToUint2(
 */
 TBool me_ParseInteger::AsciiToSint2(
   TSint_2 * ValuePtr,
-  me_MemorySegment::TMemorySegment DataSeg
+  TAddressSegment DataSeg
 )
 {
   const TUint_2
