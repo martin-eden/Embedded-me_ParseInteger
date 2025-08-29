@@ -2,13 +2,13 @@
 
 /*
   Author: Martin Eden
-  Last mod.: 2025-08-27
+  Last mod.: 2025-08-29
 */
 
 #include <me_ParseInteger.h>
 
 #include <me_BaseTypes.h>
-#include <me_WorkMemory.h>
+#include <me_StreamsCollection.h>
 
 using namespace me_ParseInteger;
 
@@ -40,7 +40,7 @@ TBool me_ParseInteger::AsciiToUint2(
 {
   const TUint_1 NumericBase = 10;
 
-  me_WorkMemory::TInputStream DataStream;
+  me_StreamsCollection::TWorkmemInputStream DataStream;
   TUnit Byte;
   TUint_1 Digit;
   TUint_2 Value;
@@ -92,7 +92,7 @@ TBool me_ParseInteger::AsciiToSint2(
     MaxPosValue = 0x7FFF, // 32767
     MaxNegValue = 0x8000; // 32768
 
-  me_WorkMemory::TInputStream DataStream;
+  me_StreamsCollection::TWorkmemInputStream DataStream;
   TUnit FirstByte;
   TBool IsNegative;
   TUint_2 Ui2Value;
