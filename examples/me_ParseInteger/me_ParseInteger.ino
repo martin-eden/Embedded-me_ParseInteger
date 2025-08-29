@@ -2,7 +2,7 @@
 
 /*
   Author: Martin Eden
-  Last mod.: 2025-08-27
+  Last mod.: 2025-08-29
 */
 
 /*
@@ -61,17 +61,6 @@ void PrintSeg(TAddressSegment Segment);
 */
 void GetEntityDemo()
 {
-  /*
-    This example was written before creation of [me_ManagedMemory] and
-    advancement of [me_MemorySegment]. It still works fine today.
-
-    But today we have standalone Print() function for memory segment
-    and we can use dynamic segment and ResizeTo() to whatever
-    size we please.
-
-    2024-10-05
-  */
-
   using
     me_SerialTokenizer::TSerialTokenizer,
     me_ParseInteger::AsciiToSint2;
