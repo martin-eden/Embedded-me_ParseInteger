@@ -2,7 +2,7 @@
 
 /*
   Author: Martin Eden
-  Last mod.: 2025-08-29
+  Last mod.: 2025-09-01
 */
 
 #include <me_ParseInteger.h>
@@ -29,7 +29,7 @@ using namespace me_ParseInteger;
 
     Leading zeroes are allowed: "001" -> 1
 
-    Non-digits are not allowed: (" 1", "1,") -> nah
+    Non-digits are not allowed: (" 1", "1a") -> nah
 
     Exceeding range is not allowed: "99999" -> nah
 */
