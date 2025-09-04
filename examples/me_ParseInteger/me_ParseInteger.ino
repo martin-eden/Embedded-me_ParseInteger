@@ -2,7 +2,7 @@
 
 /*
   Author: Martin Eden
-  Last mod.: 2025-08-29
+  Last mod.: 2025-05-09
 */
 
 /*
@@ -23,10 +23,9 @@
 
 #include <me_ParseInteger.h>
 
-#include <me_SerialTokenizer.h>
-
 #include <me_BaseTypes.h>
 #include <me_Console.h>
+#include <me_StreamTokenizer.h>
 
 // Forwards:
 void GetEntityDemo();
@@ -62,20 +61,14 @@ void PrintSeg(TAddressSegment Segment);
 void GetEntityDemo()
 {
   using
-    me_SerialTokenizer::TSerialTokenizer,
     me_ParseInteger::AsciiToSint2;
 
-  TSerialTokenizer Tokenizer;
-
   const TUint_2 BufferSize = 8;
-
   TUint_1 Buffer[BufferSize];
+  TAddressSegment BufferSeg =
+    { .Addr = (TAddress) &Buffer, .Size = sizeof(Buffer) };
 
-  TAddressSegment BufferSeg;
-  BufferSeg.Size = sizeof(Buffer);
-  BufferSeg.Addr = (TUint_2) Buffer;
-
-  if (Tokenizer.GetEntity(&BufferSeg, BufferSeg))
+  if (me_StreamTokenizer::GetEntity(&BufferSeg, Console.GetInputStream()))
   {
     TSint_2 Int2;
 
@@ -97,4 +90,5 @@ void GetEntityDemo()
 
 /*
   2024 # # # # # # #
+  2025-09-05
 */
