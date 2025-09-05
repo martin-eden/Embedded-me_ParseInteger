@@ -2,29 +2,26 @@
 
 /*
   Author: Martin Eden
-  Last mod.: 2024-12-20
+  Last mod.: 2025-09-05
 */
 
 #include <me_ParseInteger.h>
 
 using namespace me_ParseInteger;
 
-const TUint_2 MaxUi2 = 0xFFFF;
-
 /*
-  Multiply two numbers if they will not overflow
+  Multiply by 10 if it won't overflow
 */
-TBool Freetown::SafeMul(
-  TUint_2 * Result,
-  TUint_2 Base,
-  TUint_1 Digit
+TBool Freetown::SafeMulBy10(
+  TUint_2 * Result
 )
 {
-  // Invariant of "Base * Digit > MaxUi2"
-  if (Base > MaxUi2 / Digit)
+  const TUint_2 MaxValue = TUint_2_Max / 10;
+
+  if (*Result > MaxValue)
     return false;
 
-  *Result = Base * Digit;
+  *Result = *Result * 10;
 
   return true;
 }
@@ -34,15 +31,15 @@ TBool Freetown::SafeMul(
 */
 TBool Freetown::SafeAdd(
   TUint_2 * Result,
-  TUint_2 Base,
-  TUint_1 Digit
+  TUint_2 Value
 )
 {
-  // Invariant of "Base + Digit > MaxUi2"
-  if (Base > MaxUi2 - Digit)
+  TUint_2 MaxValue = TUint_2_Max - Value;
+
+  if (*Result > MaxValue)
     return false;
 
-  *Result = Base + Digit;
+  *Result = *Result + Value;
 
   return true;
 }
@@ -73,7 +70,6 @@ TBool Freetown::ToDigit(
 }
 
 /*
-  2024-05-23 memory segment, safe mul, safe add
-  2024-06-29 sync with libs
-  2024-10-05 Freetown
+  2024 # # #
+  2025-09-05
 */

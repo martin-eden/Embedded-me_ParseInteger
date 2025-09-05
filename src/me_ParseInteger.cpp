@@ -2,7 +2,7 @@
 
 /*
   Author: Martin Eden
-  Last mod.: 2025-09-01
+  Last mod.: 2025-09-05
 */
 
 #include <me_ParseInteger.h>
@@ -38,8 +38,6 @@ TBool me_ParseInteger::AsciiToUint2(
   TAddressSegment DataSeg
 )
 {
-  const TUint_1 NumericBase = 10;
-
   me_StreamsCollection::TWorkmemInputStream DataStream;
   TUnit Byte;
   TUint_1 Digit;
@@ -55,10 +53,10 @@ TBool me_ParseInteger::AsciiToUint2(
     if (!Freetown::ToDigit(&Digit, Byte))
       return false;
 
-    if (!Freetown::SafeMul(&Value, Value, NumericBase))
+    if (!Freetown::SafeMulBy10(&Value))
       return false;
 
-    if (!Freetown::SafeAdd(&Value, Value, Digit))
+    if (!Freetown::SafeAdd(&Value, (TUint_2) Digit))
       return false;
   }
 
@@ -89,8 +87,8 @@ TBool me_ParseInteger::AsciiToSint2(
 )
 {
   const TUint_2
-    MaxPosValue = 0x7FFF, // 32767
-    MaxNegValue = 0x8000; // 32768
+    MaxPosValue = (TUint_2) TSint_2_Max,
+    MaxNegValue = (TUint_2) TSint_2_Min;
 
   me_StreamsCollection::TWorkmemInputStream DataStream;
   TUnit FirstByte;
