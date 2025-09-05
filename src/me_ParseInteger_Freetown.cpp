@@ -7,6 +7,8 @@
 
 #include <me_ParseInteger.h>
 
+#include <me_BaseTypes.h>
+
 using namespace me_ParseInteger;
 
 /*
