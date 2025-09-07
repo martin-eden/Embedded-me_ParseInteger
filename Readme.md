@@ -1,8 +1,22 @@
-# What
+## What
 
 (2024-05/2024-10)
 
 Arduino library to parse ASCII to integer.
+
+
+## Obsolete
+
+This module is obsolete and should not be used.
+
+It was created before streams concept and used memory segment
+as input.
+
+Currently implementation uses streams and only user is `[me_ReadInteger]`
+which uses streams too.
+
+So code will be moved to `[me_ReadInteger]`.
+
 
 ## Reference output
 
